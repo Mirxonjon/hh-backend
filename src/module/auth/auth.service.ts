@@ -24,7 +24,7 @@ export class AuthServise {
 
     if (findUser) {
       throw new HttpException(
-        'Gmail or Number already registered',
+        'name or Number already registered',
         HttpStatus.FOUND,
       );
     }

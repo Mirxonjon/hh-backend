@@ -6,7 +6,6 @@ import {
 } from 'src/utils/videoAndImageFormat';
 
 import { UserEntity } from 'src/entities/user.entity';
-import { CustomRequest } from 'src/types';
 import { UpdateUserDto } from './dto/update_user.dto';
 
 @Injectable()
@@ -20,11 +19,14 @@ export class userServise {
       order : {
         resumes:{
           create_data : 'desc'
+        },
+        my_jobs: {
+          create_data: 'desc'
         }
-
-      },
+            },
       relations : {
-        resumes : true
+        resumes : true,
+        my_jobs : true
       }
     }).catch(() => {
       throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);

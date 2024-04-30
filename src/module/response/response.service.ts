@@ -25,7 +25,6 @@ export class ResponseServise {
   async findAll(userId :string) {
     const findResponse = await ResponseEntity.find({
       where: {
-  
         responsed_user : {
           id : userId
          }

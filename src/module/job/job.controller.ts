@@ -66,9 +66,28 @@ export class JobController {
     @Query('title') title: string,
     @Query('orgname') orgname: string,
     @Query('salary') salary: string,
+    @Query('salary_type') salary_type: string,
+    @Query('popular') popular: string,
   ) {
-    return await this.#_service.findsort(title ,orgname,salary);
+    return await this.#_service.findsort(title ,orgname,salary , salary_type , popular);
   }
+
+  @Get('/sort/myjobs')
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  @ApiOkResponse()
+  // @ApiOperation({ description : 'Bitta operatorni ish grafikini olish uchun Api. Login ga operator dasturga kirish raqami kiritiladi'})
+  async findsortmyjobs(
+    @Query('title') title: string,
+    @Query('orgname') orgname: string,
+    @Query('salary') salary: string,
+    @Query('salary_type') salary_type: string,
+
+    @Request() req :CustomRequest ,
+  ) {
+    return await this.#_service.findsortmyjobs(req.userId, title ,orgname,salary , salary_type);
+  }
+
 
 
 

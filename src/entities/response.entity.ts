@@ -30,5 +30,4 @@ export class ResponseEntity extends BaseEntity {
   @CreateDateColumn({ name: 'created_at' })
   create_data: Date;
 
-  
 }

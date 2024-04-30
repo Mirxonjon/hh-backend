@@ -20,22 +20,77 @@ export class JobServise {
   return findJob
   }
 
-
-  async findsort(title: string , org_name: string , salary : string ) {
+  
+  async findsortmyjobs(userId: string, title: string , org_name: string , salary : string, salary_type : string ) {
     const findJob = await JobsEntity.find({
-      where :{
+      where : {
+         userInfo: {
+          id: userId
+         },
         title: title != 'null' ? Like(`%${title}%`) : null,
         org_name: org_name != 'null' ? Like(`%${org_name}%`) : null,
-        salery_from : salary != 'null' ? MoreThanOrEqual(+salary) : null
+        salery_from : salary != 'null' ? MoreThanOrEqual(+salary) : null,
+        currency: salary_type != 'null' ? salary_type : null 
       },
-      order:{
+      order : {
         create_data :'desc'
+      },
+      relations : {
+        likes: true,
+        userInfo: true
       }
     });
     if (!findJob) {
-      throw new HttpException('Sort not found', HttpStatus.NOT_FOUND);
+      throw new HttpException('job not found', HttpStatus.NOT_FOUND);
     } 
     return findJob;
+  }
+
+
+  async findsort(title: string , org_name: string , salary : string  , salary_type : string , popular : string ) {
+
+    if(popular == 'null') {
+      const findJob = await JobsEntity.find({
+        where : {
+          title: title != 'null' ? Like(`%${title}%`) : null,
+          org_name: org_name != 'null' ? Like(`%${org_name}%`) : null,
+          salery_from : salary != 'null' ? MoreThanOrEqual(+salary) : null,
+          currency: salary_type != 'null' ? salary_type : null 
+        },
+        order : {
+          create_data :'desc' , 
+        },
+        relations : {
+          userInfo :{
+            mylikes :true
+          }
+        }
+      });
+      if (!findJob) {
+        throw new HttpException('Sort not found', HttpStatus.NOT_FOUND);
+      } 
+      return findJob;
+    } else {
+      const findJob = await JobsEntity.find({
+        where : {
+          title: title != 'null' ? Like(`%${title}%`) : null,
+          org_name: org_name != 'null' ? Like(`%${org_name}%`) : null,
+          salery_from : salary != 'null' ? MoreThanOrEqual(+salary) : null,
+          currency: salary_type != 'null' ? salary_type : null 
+        },
+        order : {
+          rejects : 'desc'
+        },
+        relations : {
+          likes: true
+        }
+      });
+      if (!findJob) {
+        throw new HttpException('Sort not found', HttpStatus.NOT_FOUND);
+      } 
+      return findJob;
+    }
+
   }
   
 
@@ -101,6 +156,7 @@ export class JobServise {
           salery_from: +body.salery_from ,
           currency: body.currency ,
           about: body.about ,
+          userInfo :findUser
         })
         .execute()
         .catch((e) => { 
