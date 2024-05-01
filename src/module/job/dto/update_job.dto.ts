@@ -9,6 +9,9 @@ export class UpdateJobDto {
   org_name: string;
 
   @IsString()
+  expriece: string;
+  
+  @IsString()
   address: string;
 
   @IsString()

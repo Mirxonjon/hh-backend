@@ -10,8 +10,26 @@ import { Like, MoreThan, MoreThanOrEqual } from 'typeorm';
 @Injectable()
 export class JobServise {
 
-  async findOne(id: string ) {
-    const findJob = await JobsEntity.findOneBy({ id }).catch((e) => {
+  async findOne(id: string ,userId: string) {
+    const findJob = await JobsEntity.findOne({ 
+      where :[
+        {
+        id ,
+        likes : {
+          userInfo : {
+            id: userId
+          }
+        }
+      },
+      {
+        id, 
+      },
+    ],
+      relations : {
+        responses : true,
+        likes: true
+      }
+    }).catch((e) => {
       throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
     });
     if (!findJob) {
@@ -21,16 +39,15 @@ export class JobServise {
   }
 
   
-  async findsortmyjobs(userId: string, title: string , org_name: string , salary : string, salary_type : string ) {
-    const findJob = await JobsEntity.find({
+  async findsortmyjobs(userId: string , pageNumber = 1, pageSize = 10 ) {
+    
+    const offset = (pageNumber - 1) * pageSize;
+
+    const [results, total] = await JobsEntity.findAndCount({
       where : {
          userInfo: {
           id: userId
-         },
-        title: title != 'null' ? Like(`%${title}%`) : null,
-        org_name: org_name != 'null' ? Like(`%${org_name}%`) : null,
-        salery_from : salary != 'null' ? MoreThanOrEqual(+salary) : null,
-        currency: salary_type != 'null' ? salary_type : null 
+         }
       },
       order : {
         create_data :'desc'
@@ -38,19 +55,35 @@ export class JobServise {
       relations : {
         likes: true,
         userInfo: true
-      }
+      },
+
+      skip: offset,
+      take: pageSize,
     });
-    if (!findJob) {
+    if (!results) {
       throw new HttpException('job not found', HttpStatus.NOT_FOUND);
     } 
-    return findJob;
+
+    const totalPages = Math.ceil(total / pageSize);
+
+    return {
+      results,
+      pagination: {
+        currentPage: pageNumber,
+        totalPages,
+        pageSize,
+        totalItems: total,
+      },
+    };
   }
 
 
-  async findsort(title: string , org_name: string , salary : string  , salary_type : string , popular : string ) {
+  async findsort(title: string , org_name: string , salary : string  , salary_type : string , popular : string  , pageNumber = 1, pageSize = 10) {
 
-    if(popular == 'null') {
-      const findJob = await JobsEntity.find({
+    if(popular == 'all') {
+    const offset = (pageNumber - 1) * pageSize;
+
+      const [results, total] = await JobsEntity.findAndCount({
         where : {
           title: title != 'null' ? Like(`%${title}%`) : null,
           org_name: org_name != 'null' ? Like(`%${org_name}%`) : null,
@@ -64,14 +97,28 @@ export class JobServise {
           userInfo :{
             mylikes :true
           }
-        }
+        },
+        skip: offset,
+        take: pageSize,
       });
-      if (!findJob) {
+      if (!results) {
         throw new HttpException('Sort not found', HttpStatus.NOT_FOUND);
       } 
-      return findJob;
+      const totalPages = Math.ceil(total / pageSize);
+
+      return {
+        results,
+        pagination: {
+          currentPage: pageNumber,
+          totalPages,
+          pageSize,
+          totalItems: total,
+        },
+      };
     } else {
-      const findJob = await JobsEntity.find({
+    const offset = (pageNumber - 1) * pageSize;
+
+      const [results, total]= await JobsEntity.findAndCount({
         where : {
           title: title != 'null' ? Like(`%${title}%`) : null,
           org_name: org_name != 'null' ? Like(`%${org_name}%`) : null,
@@ -83,12 +130,24 @@ export class JobServise {
         },
         relations : {
           likes: true
-        }
+        },
+        skip: offset,
+        take: pageSize,
       });
-      if (!findJob) {
+      if (!results) {
         throw new HttpException('Sort not found', HttpStatus.NOT_FOUND);
       } 
-      return findJob;
+      const totalPages = Math.ceil(total / pageSize);
+
+      return {
+        results,
+        pagination: {
+          currentPage: pageNumber,
+          totalPages,
+          pageSize,
+          totalItems: total,
+        },
+      };
     }
 
   }
@@ -148,6 +207,7 @@ export class JobServise {
            org_name: body.org_name ,
            address : body.address ,
            phone: body.phone  ,
+           expriece : body.expriece,
            email: body.email ,
            telegram: body.telegram ,
            seen : generateRandomNumbers(1 ,50),
@@ -186,6 +246,7 @@ export class JobServise {
            org_name: body.org_name || findJob.org_name,
            address : body.address || findJob.address,
            phone: body.phone  || findJob.phone,
+           expriece : body.expriece || findJob.expriece ,
            email: body.email || findJob.email,
            telegram: body.telegram || findJob.telegram,
            seen : generateRandomNumbers(1 ,50),

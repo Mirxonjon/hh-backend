@@ -63,10 +63,26 @@ export class LikeServise {
   // }
 
 
-  async create(
+  async update(
     userId: string,
     body: CreateLikeDto ,
-  ) {
+  ) {    
+    
+    const findlikes = await LikesEntity.findOne({
+    where: { 
+      JobsLiked : {
+        id :body.job_id,
+        
+      },
+      userLiked : {
+        id : userId
+      }
+     },
+     relations :{ 
+      JobsLiked : true, 
+      userLiked: true
+     }
+  });
       const findUser = await UserEntity.findOne({
         where: {
           id: userId
@@ -86,7 +102,8 @@ export class LikeServise {
       if (!findJob) {
         throw new HttpException('job not found', HttpStatus.NOT_FOUND);
       }
-    
+
+      if(!findlikes) {
         await LikesEntity.createQueryBuilder()
         .insert()
         .into(LikesEntity)
@@ -101,31 +118,38 @@ export class LikeServise {
         });
 
         return 
-    
-  }
-
-  
-  async update(
-    id: string,
-    body: UpdateLikeDto ,
-  ) {
-    const findJob = await JobsEntity.findOne({
-      where: { id },
-    });
-
-    if (!findJob) {
-      throw new HttpException('job Not Found', HttpStatus.NOT_FOUND);
-    }
-
-   
-        const updated = await LikesEntity.update(id, {
+      } else {
+        const updated = await LikesEntity.update( findlikes.id , {
           like: body.like ,
           JobsLiked: findJob ,
         });
 
         return updated;
+      }
     
   }
+
+  // async update(
+  //   id: string,
+  //   body: UpdateLikeDto ,
+  // ) {
+  //   const findJob = await JobsEntity.findOne({
+  //     where: { id },
+  //   });
+
+  //   if (!findJob) {
+  //     throw new HttpException('job Not Found', HttpStatus.NOT_FOUND);
+  //   }
+
+   
+  //       const updated = await LikesEntity.update(id, {
+  //         like: body.like ,
+  //         JobsLiked: findJob ,
+  //       });
+
+  //       return updated;
+    
+  // }
 
   async remove(id: string) {
     const findLikes = await LikesEntity.findOne({

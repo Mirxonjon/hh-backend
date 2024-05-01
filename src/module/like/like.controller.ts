@@ -35,13 +35,13 @@ export class LikeController {
     this.#_service = service;
   }
 
-  @Get('/one/:id')
-  @ApiBadRequestResponse()
-  @ApiNotFoundResponse()
-  @ApiOkResponse()
-  async findOne(@Param('id') id: string ) {   
-    return await this.#_service.findOne(id);
-  }
+  // @Get('/one/:id')
+  // @ApiBadRequestResponse()
+  // @ApiNotFoundResponse()
+  // @ApiOkResponse()
+  // async findOne(@Param('id') id: string ) {   
+  //   return await this.#_service.findOne(id);
+  // }
 
   
   @UseGuards(jwtGuard) 
@@ -98,49 +98,49 @@ export class LikeController {
     @Request() req :CustomRequest ,
     @Body() createLikeDto: CreateLikeDto,
   ) {
-    return await this.#_service.create(
+    return await this.#_service.update(
       req.userId ,
       createLikeDto
     );
   }
 
-  @UseGuards(jwtGuard)
-  @Patch('/update/:id')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        job_id: {
-          type: 'string',
-          default: 'asdfasfsfgfgsdfdf57547ff49e',
-        },
-        like: {
-          type: 'boolean',
-          default: true ,
-        },
-      },
-    },
-  })
-  @ApiBadRequestResponse()
-  @ApiNotFoundResponse()
-  async update(
-    @Param('id') id: string,
-    @Body() updateLikeDto: UpdateLikeDto,
-  ) {
-    await this.#_service.update(
-      id,
-      updateLikeDto,
-    );
-  }
+  // @UseGuards(jwtGuard)
+  // @Patch('/update/:id')
+  // @HttpCode(HttpStatus.NO_CONTENT)
+  // @ApiBody({
+  //   schema: {
+  //     type: 'object',
+  //     properties: {
+  //       job_id: {
+  //         type: 'string',
+  //         default: 'asdfasfsfgfgsdfdf57547ff49e',
+  //       },
+  //       like: {
+  //         type: 'boolean',
+  //         default: true ,
+  //       },
+  //     },
+  //   },
+  // })
+  // @ApiBadRequestResponse()
+  // @ApiNotFoundResponse()
+  // async update(
+  //   @Param('id') id: string,
+  //   @Body() updateLikeDto: UpdateLikeDto,
+  // ) {
+  //   await this.#_service.update(
+  //     id,
+  //     updateLikeDto,
+  //   );
+  // }
 
-  @UseGuards(jwtGuard)
-  @Delete('/delete/:id')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiBadRequestResponse()
-  @ApiNotFoundResponse()
-  @ApiNoContentResponse()
-  async remove(@Param('id') id: string): Promise<void> {
-    await this.#_service.remove(id);
-  }
+  // @UseGuards(jwtGuard)
+  // @Delete('/delete/:id')
+  // @HttpCode(HttpStatus.NO_CONTENT)
+  // @ApiBadRequestResponse()
+  // @ApiNotFoundResponse()
+  // @ApiNoContentResponse()
+  // async remove(@Param('id') id: string): Promise<void> {
+  //   await this.#_service.remove(id);
+  // }
 }

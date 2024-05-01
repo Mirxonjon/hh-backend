@@ -42,22 +42,22 @@ export class JobController {
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  async findOne(@Param('id') id: string ) {   
-    return await this.#_service.findOne(id);
+  async findOne(@Param('id') id: string ,    @Request() req :CustomRequest , ) {   
+    return await this.#_service.findOne(id , req.userId);
   }
 
   
 
+  // @Get('/all')
+  // @ApiBadRequestResponse()
+  // @ApiNotFoundResponse()
+  // @ApiOkResponse()
+  // async findAll() {
+  //   return await this.#_service.findAll();
+  // }
+
+  
   @Get('/all')
-  @ApiBadRequestResponse()
-  @ApiNotFoundResponse()
-  @ApiOkResponse()
-  async findAll() {
-    return await this.#_service.findAll();
-  }
-
-  
-  @Get('/sort')
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
@@ -67,25 +67,24 @@ export class JobController {
     @Query('orgname') orgname: string,
     @Query('salary') salary: string,
     @Query('salary_type') salary_type: string,
-    @Query('popular') popular: string,
+    @Query('type') popular: string,
+    @Query('pageNumber') pageNumber: number,
+    @Query('pageSize') pageSize: number,
   ) {
-    return await this.#_service.findsort(title ,orgname,salary , salary_type , popular);
+    return await this.#_service.findsort(title ,orgname,salary , salary_type , popular ,pageNumber ,pageSize);
   }
 
-  @Get('/sort/myjobs')
+  @UseGuards(jwtGuard) 
+  @Get('/all/myjobs')
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  // @ApiOperation({ description : 'Bitta operatorni ish grafikini olish uchun Api. Login ga operator dasturga kirish raqami kiritiladi'})
   async findsortmyjobs(
-    @Query('title') title: string,
-    @Query('orgname') orgname: string,
-    @Query('salary') salary: string,
-    @Query('salary_type') salary_type: string,
-
+    @Query('pageNumber') pageNumber: number,
+    @Query('pageSize') pageSize: number,
     @Request() req :CustomRequest ,
   ) {
-    return await this.#_service.findsortmyjobs(req.userId, title ,orgname,salary , salary_type);
+    return await this.#_service.findsortmyjobs(req.userId ,pageNumber ,pageSize);
   }
 
 

@@ -44,27 +44,85 @@ export class ResponseServise {
     return findResponse;
   }
 
-  async findSort(userId :string , response: string) {
-    const findRes = await ResponseEntity.find({
-      where: {
-       answer: response,
-       responsed_user : {
-        id : userId
-       }
-      },
-      order:{
-        create_data :'desc'
-      } ,
-      relations: {
-        responsed_job : true
-      }
-    });
+  async findSort(userId :string , type: string , pageNumber = 1, pageSize = 10) {
 
-    if (!findRes) {
-      throw new HttpException('likes not found', HttpStatus.NOT_FOUND);
+    if(type= 'all') {
+    const offset = (pageNumber - 1) * pageSize;
+
+      const [results, total] = await ResponseEntity.findAndCount({
+        where: {
+         responsed_user : {
+          id : userId
+         }
+        },
+        order:{
+          create_data :'desc'
+        } ,
+        relations: {
+          responsed_job : true ,
+          responsed_user : true
+        }
+        ,
+        skip: offset,
+        take: pageSize,
+      });
+
+      
+    if (!results) {
+      throw new HttpException('response not found', HttpStatus.NOT_FOUND);
     }
 
-    return findRes;
+    const totalPages = Math.ceil(total / pageSize);
+
+    return {
+      results,
+      pagination: {
+        currentPage: pageNumber,
+        totalPages,
+        pageSize,
+        totalItems: total,
+      },
+    };
+    } else {
+      const offset = (pageNumber - 1) * pageSize;
+
+      const [results, total] = await ResponseEntity.findAndCount({
+        where: {
+         answer: type,
+         responsed_user : {
+          id : userId
+         }
+        },
+        order:{
+          create_data :'desc'
+        } ,
+        relations: {
+          responsed_job : true ,
+          responsed_user : true 
+        },
+        skip: offset,
+        take: pageSize,
+      });
+
+      
+    if (!results) {
+      throw new HttpException('response not found', HttpStatus.NOT_FOUND);
+    }
+
+    const totalPages = Math.ceil(total / pageSize);
+
+    return {
+      results,
+      pagination: {
+        currentPage: pageNumber,
+        totalPages,
+        pageSize,
+        totalItems: total,
+      },
+    };
+    }
+
+
   }
 
   // async findsort(type: string) {
@@ -113,7 +171,7 @@ export class ResponseServise {
         .insert()
         .into(ResponseEntity)
         .values({
-          answer: generateRandomNumbers(1,2) == 1 ? 'rejected' : 'apply' ,
+          answer: generateRandomNumbers(1,2) == 1 ? 'rejected' : 'offer' ,
           responsed_job: findJob ,
 
         })

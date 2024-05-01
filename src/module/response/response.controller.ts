@@ -46,27 +46,29 @@ export class ResponseController {
   }
 
   
+  // @UseGuards(jwtGuard) 
+  // @Get('/all')
+  // @ApiBadRequestResponse()
+  // @ApiNotFoundResponse()
+  // @ApiOkResponse()
+  // async findAll(
+  //   @Request() req :CustomRequest ,
+  // ) {
+  //   return await this.#_service.findAll(req.userId);
+  // }
+
   @UseGuards(jwtGuard) 
   @Get('/all')
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  async findAll(
-    @Request() req :CustomRequest ,
-  ) {
-    return await this.#_service.findAll(req.userId);
-  }
-
-  @UseGuards(jwtGuard) 
-  @Get('/sort')
-  @ApiBadRequestResponse()
-  @ApiNotFoundResponse()
-  @ApiOkResponse()
   async findsort(
     @Request() req :CustomRequest ,
-    @Query('response') res: string,
+    @Query('type') type: string,
+    @Query('pageNumber') pageNumber: number,
+    @Query('pageSize') pageSize: number,
   ) {
-    return await this.#_service.findSort(req.userId , res);
+    return await this.#_service.findSort(req.userId , type , pageNumber ,pageSize);
   }
 
 
