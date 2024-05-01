@@ -29,6 +29,7 @@ export class JobsEntity extends BaseEntity {
 
   @Column({
     type: 'character varying',
+    nullable: true
   })
   expriece: string;
 
