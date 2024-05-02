@@ -29,6 +29,7 @@ import { CreateJobDto } from './dto/create_job.dto';
 import { UpdateJobDto } from './dto/update_job.dto';
 import { jwtGuard } from '../auth/guards/jwt.guard';
 import { CustomRequest } from 'src/types';
+import { useContainer } from 'class-validator';
 @Controller('job')
 @ApiTags('job')
 @ApiBearerAuth('JWT-auth')
@@ -84,6 +85,8 @@ export class JobController {
     @Query('pageSize') pageSize: number,
     @Request() req :CustomRequest ,
   ) {
+    console.log('okk ' , req);
+    
     return await this.#_service.findsortmyjobs(req.userId ,pageNumber ,pageSize);
   }
 
@@ -162,6 +165,8 @@ export class JobController {
     @Request() req :CustomRequest ,
     @Body() createJobDto: CreateJobDto,
   ) {
+    console.log(req.userId);
+    
     return await this.#_service.create(
       req.userId ,
       createJobDto

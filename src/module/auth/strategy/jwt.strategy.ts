@@ -26,12 +26,15 @@ export class jwtStrategy extends PassportStrategy(Strategy) {
         id: payload.id ,
       },
     });
+    // console.log(findUser);
+    
 
     if (!findUser) {
       throw new HttpException('You are not login', HttpStatus.NOT_FOUND);
     }
     req.userId  = findUser.id
-
+    // console.log(req.userId , findUser.id);
+    
     return '1';
   }
 }

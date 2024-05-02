@@ -147,6 +147,18 @@ export class ResponseServise {
     userId: string,
     body: CreateResponseDto ,
   ) {
+      const findResponses= await ResponseEntity.findOne({
+        where : {
+          responsed_user : {
+              id: body.job_id
+          },
+          responsed_job : {
+            id : userId
+          }
+        }
+      })
+
+      if(!findResponses) {
       const findUser = await UserEntity.findOne({
         where: {
           id: userId
@@ -173,7 +185,7 @@ export class ResponseServise {
         .values({
           answer: generateRandomNumbers(1,2) == 1 ? 'rejected' : 'offer' ,
           responsed_job: findJob ,
-
+          responsed_user : findUser
         })
         .execute()
         .catch((e) => { 
@@ -181,6 +193,9 @@ export class ResponseServise {
         });
 
         return 
+      } else {
+        throw new HttpException('you alrady response found', HttpStatus.NOT_FOUND);
+      }
     
   }
 

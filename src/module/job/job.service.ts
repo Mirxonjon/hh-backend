@@ -6,6 +6,8 @@ import { UserEntity } from 'src/entities/user.entity';
 import { JobsEntity } from 'src/entities/jobs.entity';
 import { generateRandomNumbers } from 'src/utils/utils';
 import { Like, MoreThan, MoreThanOrEqual } from 'typeorm';
+import { LikesEntity } from 'src/entities/likes.entity';
+import { ResponseEntity } from 'src/entities/response.entity';
 
 @Injectable()
 export class JobServise {
@@ -13,33 +15,67 @@ export class JobServise {
   async findOne(id: string ,userId: string) {
     const findJob = await JobsEntity.findOne({ 
       where :[
-        {
-        id ,
-        likes : {
-          userInfo : {
-            id: userId
-          }
-        }
-      },
       {
         id, 
       },
     ],
       relations : {
-        responses : true,
-        likes: true
+        // responses : true,
+        // likes: true
       }
     }).catch((e) => {
+      console.log('okk' , e);
+      
       throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
     });
     if (!findJob) {
       throw new HttpException('Aplication not found', HttpStatus.NOT_FOUND);
     }
-  return findJob
+
+    const likes = await LikesEntity.findOne({
+      where: {
+        JobsLiked: { 
+          id : findJob.id
+        },
+        userLiked :{
+          id: userId
+        },
+        
+      },
+    }).catch((e) => {
+      console.log('okk' , e);
+      
+      throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
+    });
+
+    const responses = await  ResponseEntity.findOne({
+      where : {
+        responsed_job : {
+          id :findJob.id ,
+        },
+        responsed_user : {
+          id :userId
+        }
+      }
+    }).catch((e) => {
+      console.log('okk' , e);
+      
+      throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
+    });
+// console.log(responses);
+
+
+  return {
+    ...findJob ,
+    likes , 
+    responses
+  }
   }
 
   
   async findsortmyjobs(userId: string , pageNumber = 1, pageSize = 10 ) {
+    console.log(userId);
+    
     
     const offset = (pageNumber - 1) * pageSize;
 
@@ -53,13 +89,14 @@ export class JobServise {
         create_data :'desc'
       },
       relations : {
-        likes: true,
+        // likes: true,
         userInfo: true
       },
-
       skip: offset,
       take: pageSize,
     });
+    // console.log(results);
+    
     if (!results) {
       throw new HttpException('job not found', HttpStatus.NOT_FOUND);
     } 
