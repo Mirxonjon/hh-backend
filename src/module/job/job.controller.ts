@@ -18,6 +18,7 @@ import {
   ApiBearerAuth,
   ApiBody,
   ApiCreatedResponse,
+  ApiHeader,
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -28,7 +29,7 @@ import { JobServise } from './job.service';
 import { CreateJobDto } from './dto/create_job.dto';
 import { UpdateJobDto } from './dto/update_job.dto';
 import { jwtGuard } from '../auth/guards/jwt.guard';
-import { CustomRequest } from 'src/types';
+import { CustomHeaders, CustomRequest } from 'src/types';
 import { useContainer } from 'class-validator';
 @Controller('job')
 @ApiTags('job')
@@ -43,8 +44,8 @@ export class JobController {
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  async findOne(@Param('id') id: string ,    @Request() req :CustomRequest , ) {   
-    return await this.#_service.findOne(id , req.userId);
+  async findOne(@Param('id') id: string ,        @Headers() header: CustomHeaders, ) {   
+    return await this.#_service.findOne(id , header);
   }
 
   
@@ -75,19 +76,20 @@ export class JobController {
     return await this.#_service.findsort(title ,orgname,salary , salary_type , popular ,pageNumber ,pageSize);
   }
 
-  @UseGuards(jwtGuard) 
   @Get('/all/myjobs')
   @ApiBadRequestResponse()
+  @UseGuards(jwtGuard) 
   @ApiNotFoundResponse()
   @ApiOkResponse()
+
   async findsortmyjobs(
     @Query('pageNumber') pageNumber: number,
     @Query('pageSize') pageSize: number,
-    @Request() req :CustomRequest ,
+    @Headers() header: CustomHeaders
   ) {
-    console.log('okk ' , req);
+    // console.log('okk ' , req.userId);
     
-    return await this.#_service.findsortmyjobs(req.userId ,pageNumber ,pageSize);
+    return await this.#_service.findsortmyjobs(header ,pageNumber ,pageSize);
   }
 
 
@@ -164,11 +166,12 @@ export class JobController {
   async create(
     @Request() req :CustomRequest ,
     @Body() createJobDto: CreateJobDto,
+    @Headers() header: CustomHeaders
   ) {
     console.log(req.userId);
     
     return await this.#_service.create(
-      req.userId ,
+      header ,
       createJobDto
     );
   }

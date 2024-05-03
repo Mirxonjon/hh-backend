@@ -1,5 +1,5 @@
 import { Storage } from '@google-cloud/storage';
-import { Module } from '@nestjs/common';
+import { Module, CacheModule } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './strategy/local.strategy';
@@ -15,6 +15,7 @@ import { AuthServise } from './auth.service';
       global: true,
       signOptions: { expiresIn: '3600s' },
     }),
+    CacheModule.register()
   ],
   controllers: [AuthController],
   providers: [LocalStrategy, jwtStrategy, AuthServise],

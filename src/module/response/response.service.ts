@@ -6,9 +6,15 @@ import { LikesEntity } from 'src/entities/likes.entity';
 import {  UpdateResponseDto } from './dto/update_response.dto';
 import { ResponseEntity } from 'src/entities/response.entity';
 import { generateRandomNumbers } from 'src/utils/utils';
+import { CustomHeaders } from 'src/types';
+import { AuthServise } from '../auth/auth.service';
 
 @Injectable()
 export class ResponseServise {
+  readonly #_auth: AuthServise ;
+  constructor(auth: AuthServise) {
+    this.#_auth = auth;
+  }
 
   async findOne(id: string ) {
     const findLike = await LikesEntity.findOneBy({ id }).catch((e) => {
@@ -44,83 +50,93 @@ export class ResponseServise {
     return findResponse;
   }
 
-  async findSort(userId :string , type: string , pageNumber = 1, pageSize = 10) {
+  async findSort( header: CustomHeaders , type: string , pageNumber = 1, pageSize = 10) {
 
-    if(type= 'all') {
-    const offset = (pageNumber - 1) * pageSize;
+    if(header.authorization){
+      const data =await this.#_auth.verify(header.authorization.split(' ')[1]);
+      const userId = data.id
 
-      const [results, total] = await ResponseEntity.findAndCount({
-        where: {
-         responsed_user : {
-          id : userId
-         }
-        },
-        order:{
-          create_data :'desc'
-        } ,
-        relations: {
-          responsed_job : true ,
-          responsed_user : true
+      if(type= 'all') {
+        const offset = (pageNumber - 1) * pageSize;
+    
+          const [results, total] :any = await ResponseEntity.findAndCount({
+            where: {
+             responsed_user : {
+              id : userId
+             }
+            },
+            order:{
+              create_data :'desc'
+            } ,
+            relations: {
+              responsed_job : true ,
+              responsed_user : true
+            }
+            ,
+            skip: offset,
+            take: pageSize,
+          });
+    
+          
+        if (!results) {
+          throw new HttpException('response not found', HttpStatus.NOT_FOUND);
         }
-        ,
-        skip: offset,
-        take: pageSize,
-      });
-
-      
-    if (!results) {
-      throw new HttpException('response not found', HttpStatus.NOT_FOUND);
+    
+        const totalPages = Math.ceil(total / pageSize);
+        let data = []
+    
+        results.map(e  => data.push({id :e.id , answer :e.answer , ...e.responsed_job , ...e.responsed_user  }))
+    
+        return {
+          data,
+          pagination: {
+            currentPage: pageNumber,
+            totalPages,
+            pageSize,
+            totalItems: total,
+          },
+        };
+        } else {
+          const offset = (pageNumber - 1) * pageSize;
+    
+          const [results, total] = await ResponseEntity.findAndCount({
+            where: {
+             answer: type,
+             responsed_user : {
+              id : userId
+             }
+            },
+            order:{
+              create_data :'desc'
+            } ,
+            relations: {
+              responsed_job : true ,
+              responsed_user : true 
+            },
+            skip: offset,
+            take: pageSize,
+          });
+    
+          
+        if (!results) {
+          throw new HttpException('response not found', HttpStatus.NOT_FOUND);
+        }
+    
+        const totalPages = Math.ceil(total / pageSize);
+    
+        return {
+          results,
+          pagination: {
+            currentPage: pageNumber,
+            totalPages,
+            pageSize,
+            totalItems: total,
+          },
+        };
+        }
     }
 
-    const totalPages = Math.ceil(total / pageSize);
 
-    return {
-      results,
-      pagination: {
-        currentPage: pageNumber,
-        totalPages,
-        pageSize,
-        totalItems: total,
-      },
-    };
-    } else {
-      const offset = (pageNumber - 1) * pageSize;
-
-      const [results, total] = await ResponseEntity.findAndCount({
-        where: {
-         answer: type,
-         responsed_user : {
-          id : userId
-         }
-        },
-        order:{
-          create_data :'desc'
-        } ,
-        relations: {
-          responsed_job : true ,
-          responsed_user : true 
-        },
-        skip: offset,
-        take: pageSize,
-      });
-
-      
-    if (!results) {
-      throw new HttpException('response not found', HttpStatus.NOT_FOUND);
-    }
-
-    const totalPages = Math.ceil(total / pageSize);
-
-    return {
-      results,
-      pagination: {
-        currentPage: pageNumber,
-        totalPages,
-        pageSize,
-        totalItems: total,
-      },
-    };
-    }
 
 
   }
@@ -144,9 +160,14 @@ export class ResponseServise {
 
 
   async create(
-    userId: string,
+    header: CustomHeaders ,
     body: CreateResponseDto ,
   ) {
+
+    if(header.authorization){
+      const data =await this.#_auth.verify(header.authorization.split(' ')[1]);
+      const userId = data.id
+
       const findResponses= await ResponseEntity.findOne({
         where : {
           responsed_user : {
@@ -196,6 +217,11 @@ export class ResponseServise {
       } else {
         throw new HttpException('you alrady response found', HttpStatus.NOT_FOUND);
       }
+
+
+    }
+
+      
     
   }
 

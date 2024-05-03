@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Headers,
   HttpCode,
   HttpStatus,
   Param,
@@ -29,7 +30,7 @@ import { userServise } from './user.service';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { UpdateUserDto } from './dto/update_user.dto';
 import { jwtGuard } from '../auth/guards/jwt.guard';
-import { CustomRequest } from 'src/types';
+import { CustomHeaders, CustomRequest } from 'src/types';
 @Controller('user')
 @ApiTags('user')
 @ApiBearerAuth('JWT-auth')
@@ -43,8 +44,8 @@ export class userController {
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  async findOne(@Request() req: CustomRequest ) {
-    return await this.#_service.findOne(req.userId);
+  async findOne(@Headers() header: CustomHeaders) {
+    return await this.#_service.findOne(header);
   }
 
   @UseGuards(jwtGuard)
@@ -85,12 +86,12 @@ export class userController {
     FileFieldsInterceptor([{ name: 'image' }]),
   )
   async update(
-    @Request() req : CustomRequest,
+    @Headers() header: CustomHeaders,
     @Body() updatePartnerDto: UpdateUserDto,
     files: { image?: Express.Multer.File; },
   ) {
     await this.#_service.update(
-      req.userId,
+      header ,
       updatePartnerDto,
       files?.image ? files?.image[0] : null,
     );
@@ -103,8 +104,8 @@ export class userController {
   @ApiNotFoundResponse()
   @ApiNoContentResponse()
   async remove(
-    @Request() req :CustomRequest
+    @Headers() header: CustomHeaders,
   ): Promise<void> {
-    await this.#_service.remove(req.userId);
+    await this.#_service.remove(header);
   }
 }

@@ -3,9 +3,17 @@ import {  CreateResumeDto } from './dto/create_resume.dto';
 import { UpdateResumeDto } from './dto/update_resume.dto';
 import {  ResumeEntity } from 'src/entities/resumes.entity';
 import { UserEntity } from 'src/entities/user.entity';
+import { CustomHeaders } from 'src/types';
+import { AuthServise } from '../auth/auth.service';
 
 @Injectable()
 export class ResumeServise {
+
+  
+  readonly #_auth: AuthServise ;
+  constructor(auth: AuthServise) {
+    this.#_auth = auth;
+  }
 
   async findOne(id: string ) {
     const findResume = await ResumeEntity.findOneBy({ id }).catch((e) => {
@@ -52,9 +60,14 @@ export class ResumeServise {
 
 
   async create(
-    userId: string,
+    header: CustomHeaders  ,
     body: CreateResumeDto ,
   ) {
+
+    if(header.authorization){
+      const data =await this.#_auth.verify(header.authorization.split(' ')[1]);
+      const userId = data.id
+
       const findUser = await UserEntity.findOne({
         where: {
           id: userId
@@ -84,6 +97,9 @@ export class ResumeServise {
 
         return
     
+    }
+
+  
   }
 
   

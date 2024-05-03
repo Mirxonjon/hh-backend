@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Headers,
   HttpCode,
   HttpStatus,
   Param,
@@ -16,6 +17,7 @@ import {
   ApiBearerAuth,
   ApiBody,
   ApiCreatedResponse,
+  ApiHeader,
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse, 
@@ -25,7 +27,7 @@ import { LikeServise } from './like.service';
 import { CreateLikeDto } from './dto/create_like.dto';
 import { UpdateLikeDto } from './dto/update_like.dto';
 import { jwtGuard } from '../auth/guards/jwt.guard';
-import { CustomRequest } from 'src/types';
+import { CustomHeaders, CustomRequest } from 'src/types';
 @Controller('like')
 @ApiTags('like')
 @ApiBearerAuth('JWT-auth')
@@ -33,7 +35,10 @@ export class LikeController {
   readonly #_service: LikeServise;
   constructor(service: LikeServise) {
     this.#_service = service;
+  
   }
+
+
 
   // @Get('/one/:id')
   // @ApiBadRequestResponse()
@@ -44,15 +49,15 @@ export class LikeController {
   // }
 
   
-  @UseGuards(jwtGuard) 
+  // @UseGuards(jwtGuard) 
   @Get('/all')
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
   async findAll(
-    @Request() req :CustomRequest ,
+    @Headers() header: CustomHeaders
   ) {
-    return await this.#_service.findAll(req.userId);
+    return await this.#_service.findAll(header);
   }
 
   
@@ -69,7 +74,7 @@ export class LikeController {
 
 
 
-  @UseGuards(jwtGuard) 
+  // @UseGuards(jwtGuard) 
   @Post('create')
   @HttpCode(HttpStatus.CREATED)
   @ApiBody({
@@ -95,11 +100,12 @@ export class LikeController {
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   async create(
-    @Request() req :CustomRequest ,
+    // @Request() req :CustomRequest ,
     @Body() createLikeDto: CreateLikeDto,
+    @Headers() header: CustomHeaders
   ) {
     return await this.#_service.update(
-      req.userId ,
+      header,
       createLikeDto
     );
   }

@@ -1,6 +1,8 @@
 import {
   HttpException,
   HttpStatus,
+  Inject,
+  Request,
   UnauthorizedException,
 } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
@@ -8,7 +10,9 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import {  UserEntity } from 'src/entities/user.entity';
 import { CustomRequest } from 'src/types';
 
+
 export class jwtStrategy extends PassportStrategy(Strategy) {
+
   constructor() {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -19,22 +23,24 @@ export class jwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(req: CustomRequest, payload: any) {
+  async validate( payload: any , @Request() request:CustomRequest ) {
+    console.log(await payload.id  ,'aaaa')
 
     const findUser = await UserEntity.findOne({
       where: {
-        id: payload.id ,
+        id: payload.id ,  
       },
-    });
-    // console.log(findUser);
+    }).catch(e => console.log(e)
+    );
+    console.log( payload ,findUser , 'aaaaaaaaa' );
     
 
     if (!findUser) {
       throw new HttpException('You are not login', HttpStatus.NOT_FOUND);
     }
-    req.userId  = findUser.id
-    // console.log(req.userId , findUser.id);
+    request.userId  = findUser.id 
+
     
-    return '1';
+    return findUser.id;
   }
 }

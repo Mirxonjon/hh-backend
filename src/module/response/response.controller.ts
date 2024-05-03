@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Headers,
   HttpCode,
   HttpStatus,
   Param,
@@ -27,7 +28,7 @@ import { ResponseServise } from './response.service';
 import { CreateResponseDto } from './dto/create_response.dto';
 import {  UpdateResponseDto } from './dto/update_response.dto';
 import { jwtGuard } from '../auth/guards/jwt.guard';
-import { CustomRequest } from 'src/types';
+import { CustomHeaders, CustomRequest } from 'src/types';
 @Controller('Response')
 @ApiTags('Response')
 @ApiBearerAuth('JWT-auth')
@@ -63,12 +64,12 @@ export class ResponseController {
   @ApiNotFoundResponse()
   @ApiOkResponse()
   async findsort(
-    @Request() req :CustomRequest ,
+    @Headers() header: CustomHeaders,
     @Query('type') type: string,
     @Query('pageNumber') pageNumber: number,
     @Query('pageSize') pageSize: number,
   ) {
-    return await this.#_service.findSort(req.userId , type , pageNumber ,pageSize);
+    return await this.#_service.findSort(header , type , pageNumber ,pageSize);
   }
 
 
@@ -95,11 +96,11 @@ export class ResponseController {
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   async create(
-    @Request() req :CustomRequest ,
+    @Headers() header: CustomHeaders,
     @Body() createResponseDto: CreateResponseDto,
   ) {
     return await this.#_service.create(
-      req.userId ,
+      header,
       createResponseDto
     );
   }

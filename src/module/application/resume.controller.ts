@@ -28,7 +28,7 @@ import { ResumeServise } from './resume.service';
 import {  CreateResumeDto } from './dto/create_resume.dto';
 import { UpdateResumeDto } from './dto/update_resume.dto';
 import { jwtGuard } from '../auth/guards/jwt.guard';
-import { CustomRequest } from 'src/types';
+import { CustomHeaders, CustomRequest } from 'src/types';
 @Controller('Resume')
 @ApiTags('Resume')
 @ApiBearerAuth('JWT-auth')
@@ -116,11 +116,11 @@ export class ResumeController {
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   async create(
-    @Request() req :CustomRequest ,
+    @Headers() header: CustomHeaders ,
     @Body() createResumeDto: CreateResumeDto,
   ) {
     return await this.#_service.create(
-      req.userId ,
+      header,
       createResumeDto
     );
   }

@@ -8,110 +8,129 @@ import { generateRandomNumbers } from 'src/utils/utils';
 import { Like, MoreThan, MoreThanOrEqual } from 'typeorm';
 import { LikesEntity } from 'src/entities/likes.entity';
 import { ResponseEntity } from 'src/entities/response.entity';
+import { CustomHeaders } from 'src/types';
+import { AuthServise } from '../auth/auth.service';
 
 @Injectable()
 export class JobServise {
 
-  async findOne(id: string ,userId: string) {
-    const findJob = await JobsEntity.findOne({ 
-      where :[
-      {
-        id, 
-      },
-    ],
-      relations : {
-        // responses : true,
-        // likes: true
+  readonly #_auth: AuthServise ;
+  constructor(auth: AuthServise) {
+    this.#_auth = auth;
+  }
+
+  async findOne(id: string ,  header: CustomHeaders) {
+
+    if(header.authorization){
+      const data =await this.#_auth.verify(header.authorization.split(' ')[1]);
+      const userId = data.id
+
+      const findJob = await JobsEntity.findOne({ 
+        where :[
+        {
+          id, 
+        },
+      ],
+        relations : {
+          // responses : true,
+          // likes: true
+        }
+      }).catch((e) => {
+        console.log('okk' , e);
+        
+        throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
+      });
+      if (!findJob) {
+        throw new HttpException('Aplication not found', HttpStatus.NOT_FOUND);
       }
-    }).catch((e) => {
-      console.log('okk' , e);
-      
-      throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
-    });
-    if (!findJob) {
-      throw new HttpException('Aplication not found', HttpStatus.NOT_FOUND);
+  
+      const likes = await LikesEntity.findOne({
+        where: {
+          JobsLiked: { 
+            id : findJob.id
+          },
+          userLiked :{
+            id: userId
+          },
+          
+        },
+      }).catch((e) => {
+        throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
+      });
+  
+      const responses = await  ResponseEntity.findOne({
+        where : {
+          responsed_job : {
+            id :findJob.id ,
+          },
+          responsed_user : {
+            id :userId
+          }
+        }
+      }).catch((e) => {
+        console.log('okk' , e);
+        
+        throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
+      });
+  
+  
+    return {
+      ...findJob ,
+      likes , 
+      responses
     }
 
-    const likes = await LikesEntity.findOne({
-      where: {
-        JobsLiked: { 
-          id : findJob.id
-        },
-        userLiked :{
-          id: userId
-        },
-        
-      },
-    }).catch((e) => {
-      console.log('okk' , e);
-      
-      throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
-    });
-
-    const responses = await  ResponseEntity.findOne({
-      where : {
-        responsed_job : {
-          id :findJob.id ,
-        },
-        responsed_user : {
-          id :userId
-        }
-      }
-    }).catch((e) => {
-      console.log('okk' , e);
-      
-      throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
-    });
-// console.log(responses);
-
-
-  return {
-    ...findJob ,
-    likes , 
-    responses
-  }
+    }
+    
   }
 
   
-  async findsortmyjobs(userId: string , pageNumber = 1, pageSize = 10 ) {
-    console.log(userId);
+  async findsortmyjobs(    header: CustomHeaders , pageNumber = 1, pageSize = 10 ) {
+    console.log(header ,'userid');
     
-    
-    const offset = (pageNumber - 1) * pageSize;
+    if(header.authorization){
+      const data =await this.#_auth.verify(header.authorization.split(' ')[1]);
+      const userId = data.id
 
-    const [results, total] = await JobsEntity.findAndCount({
-      where : {
-         userInfo: {
-          id: userId
-         }
-      },
-      order : {
-        create_data :'desc'
-      },
-      relations : {
-        // likes: true,
-        userInfo: true
-      },
-      skip: offset,
-      take: pageSize,
-    });
-    // console.log(results);
-    
-    if (!results) {
-      throw new HttpException('job not found', HttpStatus.NOT_FOUND);
-    } 
+      const offset = (pageNumber - 1) * pageSize;
 
-    const totalPages = Math.ceil(total / pageSize);
-
-    return {
-      results,
-      pagination: {
-        currentPage: pageNumber,
-        totalPages,
-        pageSize,
-        totalItems: total,
-      },
-    };
+      const [results, total] = await JobsEntity.findAndCount({
+        where : {
+           userInfo: {
+            id: userId
+           }
+        },
+        order : {
+          create_data :'desc'
+        },
+        relations : {
+          // likes: true,
+          userInfo: true
+        },
+        skip: offset,
+        take: pageSize,
+      });
+      // console.log(results);
+      
+      if (!results) {
+        throw new HttpException('job not found', HttpStatus.NOT_FOUND);
+      } 
+  
+      const totalPages = Math.ceil(total / pageSize);
+  
+      return {
+        results,
+        pagination: {
+          currentPage: pageNumber,
+          totalPages,
+          pageSize,
+          totalItems: total,
+        },
+      };
+    }  else {
+      throw new HttpException('token hato', HttpStatus.NOT_FOUND);
+    }
+   
   }
 
 
@@ -204,34 +223,25 @@ export class JobServise {
     return findJob;
   }
 
-  // async findsort(type: string) {
-  //   const findAplication = await ApplicationEntity.find({
-  //     where: {
-  //       type_of_service: type == 'Все' ? null : type
-  //     },
-  //     order:{
-  //       create_data :'desc'
-  //     }
-  //   });
-
-  //   if (!findAplication) {
-  //     throw new HttpException('Aplication not found', HttpStatus.NOT_FOUND);
-  //   }
-
-  //   return findAplication;
-  // }
-
+ 
 
   async create(
-    userId: string,
+    header: CustomHeaders ,
     body: CreateJobDto ,
   ) {
+
+    if(header.authorization){
+      const data =await this.#_auth.verify(header.authorization.split(' ')[1]);
+      const userId = data.id
       const findUser = await UserEntity.findOne({
         where: {
           id: userId
         }
-      })
-
+      }).catch(e =>console.log(e)
+       )
+      
+      console.log(findUser);
+      
       if (!findUser) {
         throw new HttpException('User not found', HttpStatus.NOT_FOUND);
       }
@@ -261,6 +271,11 @@ export class JobServise {
         });
 
         return
+    } else {
+      throw new HttpException('token hato', HttpStatus.NOT_FOUND);
+    }
+
+     
     
   }
 
