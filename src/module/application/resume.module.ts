@@ -4,7 +4,7 @@ import { ResumeServise } from './resume.service';
 import { AuthServise } from '../auth/auth.service';
 
 @Module({
-  controllers: [ResumeController , AuthServise],
-  providers: [ResumeServise],
+  controllers: [ResumeController ],
+  providers: [ResumeServise, AuthServise],
 })
 export class ResumeModule {}
