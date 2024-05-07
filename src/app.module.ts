@@ -19,7 +19,7 @@ import { ResponseModule } from './module/response/response.module';
     userModule,
     JobModule,
     LikeModule,
-    ResponseModule
+    ResponseModule,
   ],
   controllers: [],
   providers: [],

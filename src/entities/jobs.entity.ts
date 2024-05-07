@@ -11,7 +11,6 @@ import { UserEntity } from './user.entity';
 import { LikesEntity } from './likes.entity';
 import { ResponseEntity } from './response.entity';
 
-
 @Entity()
 export class JobsEntity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
@@ -19,17 +18,17 @@ export class JobsEntity extends BaseEntity {
 
   @Column({
     type: 'character varying',
-  }) 
+  })
   title: string;
 
   @Column({
-      type: 'character varying',
+    type: 'character varying',
   })
   org_name: string;
 
   @Column({
     type: 'character varying',
-    nullable: true
+    nullable: true,
   })
   expriece: string;
 
@@ -59,16 +58,16 @@ export class JobsEntity extends BaseEntity {
   telegram: string;
 
   @Column({
-      type: 'bigint',
+    type: 'bigint',
   })
   salery_from: number;
 
   @Column({
     type: 'character varying',
-    default:`som`
+    default: `som`,
   })
   currency: string;
-  
+
   @Column({
     type: 'character varying',
   })
@@ -76,7 +75,6 @@ export class JobsEntity extends BaseEntity {
 
   @Column({
     type: 'bigint',
-    
   })
   seen: number;
 
@@ -85,17 +83,15 @@ export class JobsEntity extends BaseEntity {
   })
   rejects: number;
 
-  @ManyToOne(() => UserEntity, user => user.my_jobs)
-  userInfo: UserEntity
+  @ManyToOne(() => UserEntity, (user) => user.my_jobs)
+  userInfo: UserEntity;
 
-      
-  @OneToMany(()  => LikesEntity , likes => likes.JobsLiked)
-  likes: JobsEntity[]
+  @OneToMany(() => LikesEntity, (likes) => likes.JobsLiked)
+  likes: JobsEntity[];
 
-  @OneToMany(()  => ResponseEntity , responses => responses.responsed_job )
-  responses: JobsEntity[]
+  @OneToMany(() => ResponseEntity, (responses) => responses.responsed_job)
+  responses: JobsEntity[];
 
   @CreateDateColumn({ name: 'created_at' })
   create_data: Date;
-
 }

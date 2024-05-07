@@ -14,33 +14,32 @@ export const googleCloud = async (file: any | any[]) => {
   const a: any[] = [];
   a.push(file);
   const imageLink = join(v4() + extname(a[0]?.originalname));
-  
-  const blob =  bucket.file(imageLink);
-  const blobStream =  blob.createWriteStream();
 
-  blobStream.on('error', (err) => {
-  });
+  const blob = bucket.file(imageLink);
+  const blobStream = blob.createWriteStream();
+
+  blobStream.on('error', (err) => {});
 
   blobStream.end(a[0]?.buffer);
   return imageLink;
 };
 
-export const googleCloudAsync = async (file: any | any[]) :Promise<string> => {
+export const googleCloudAsync = async (file: any | any[]): Promise<string> => {
   const a: any[] = [];
   a.push(file);
   const imageLink = join(v4() + extname(a[0]?.originalname));
-  const blob =  bucket.file(imageLink);
-  const blobStream =  blob.createWriteStream();
+  const blob = bucket.file(imageLink);
+  const blobStream = blob.createWriteStream();
 
   return new Promise((resolve, reject) => {
     blobStream.on('error', (err) => {
       reject(err.message);
     });
-    
+
     blobStream.on('finish', () => {
       resolve(imageLink);
     });
-    
+
     blobStream.end(a[0]?.buffer);
   });
 };
@@ -59,4 +58,3 @@ export const deleteFileCloud = async (imageLink: string) => {
   });
   return imageLink;
 };
-

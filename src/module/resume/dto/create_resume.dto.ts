@@ -20,10 +20,8 @@ export class CreateResumeDto {
   @IsString()
   @IsNotEmpty()
   currency: string;
-  
+
   @IsString()
   @IsNotEmpty()
   about: string;
-
-
 }

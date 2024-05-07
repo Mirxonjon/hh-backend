@@ -34,7 +34,7 @@ export class AuthServise {
       .into(UserEntity)
       .values({
         name: createUser.name,
-        password :createUser.password
+        password: createUser.password,
       })
       .returning(['id'])
       .execute()

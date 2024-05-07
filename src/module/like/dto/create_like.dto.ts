@@ -7,6 +7,5 @@ export class CreateLikeDto {
 
   @IsBoolean()
   @IsNotEmpty()
-  like: boolean
-  
+  like: boolean;
 }

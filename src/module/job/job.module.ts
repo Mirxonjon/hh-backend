@@ -5,6 +5,6 @@ import { AuthServise } from '../auth/auth.service';
 
 @Module({
   controllers: [JobController],
-  providers: [JobServise , AuthServise],
+  providers: [JobServise, AuthServise],
 })
 export class JobModule {}

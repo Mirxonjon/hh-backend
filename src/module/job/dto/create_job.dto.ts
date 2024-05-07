@@ -25,7 +25,6 @@ export class CreateJobDto {
   @IsNotEmpty()
   email: string;
 
-  
   @IsString()
   @IsNotEmpty()
   telegram: string;
@@ -41,10 +40,8 @@ export class CreateJobDto {
   @IsString()
   @IsNotEmpty()
   currency: string;
-  
+
   @IsString()
   @IsNotEmpty()
   about: string;
-
-
 }

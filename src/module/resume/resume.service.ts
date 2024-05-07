@@ -1,37 +1,33 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import {  CreateResumeDto } from './dto/create_resume.dto';
+import { CreateResumeDto } from './dto/create_resume.dto';
 import { UpdateResumeDto } from './dto/update_resume.dto';
-import {  ResumeEntity } from 'src/entities/resumes.entity';
+import { ResumeEntity } from 'src/entities/resumes.entity';
 import { UserEntity } from 'src/entities/user.entity';
 import { CustomHeaders } from 'src/types';
 import { AuthServise } from '../auth/auth.service';
 
 @Injectable()
 export class ResumeServise {
-
-  
-  readonly #_auth: AuthServise ;
+  readonly #_auth: AuthServise;
   constructor(auth: AuthServise) {
     this.#_auth = auth;
   }
 
-  async findOne(id: string ) {
+  async findOne(id: string) {
     const findResume = await ResumeEntity.findOneBy({ id }).catch((e) => {
       throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
     });
     if (!findResume) {
       throw new HttpException('Aplication not found', HttpStatus.NOT_FOUND);
     }
-  return findResume
+    return findResume;
   }
-
-  
 
   async findAll() {
     const findResumes = await ResumeEntity.find({
-      order:{
-        create_data :'desc'
-      }
+      order: {
+        create_data: 'desc',
+      },
     });
 
     if (!findResumes) {
@@ -58,55 +54,45 @@ export class ResumeServise {
   //   return findAplication;
   // }
 
-
-  async create(
-    header: CustomHeaders  ,
-    body: CreateResumeDto ,
-  ) {
-
-    if(header.authorization){
-      const data =await this.#_auth.verify(header.authorization.split(' ')[1]);
-      const userId = data.id
+  async create(header: CustomHeaders, body: CreateResumeDto) {
+    if (header.authorization) {
+      const data = await this.#_auth.verify(header.authorization.split(' ')[1]);
+      const userId = data.id;
 
       const findUser = await UserEntity.findOne({
         where: {
-          id: userId
-        }
-      })
+          id: userId,
+        },
+      });
 
       if (!findUser) {
         throw new HttpException('User not found', HttpStatus.NOT_FOUND);
       }
-    
-        await ResumeEntity.createQueryBuilder()
+
+      await ResumeEntity.createQueryBuilder()
         .insert()
         .into(ResumeEntity)
         .values({
-          title :body.title,
-          skills :body.skills ,
-          experinces : body.experinces ,
+          title: body.title,
+          skills: body.skills,
+          experinces: body.experinces,
           salery_from: +body.salery_from,
-          currency: body.currency ,
+          currency: body.currency,
           about: body.about,
-          user: findUser
+          user: findUser,
         })
         .execute()
-        .catch((e) => { 
+        .catch((e) => {
           throw new HttpException('Bad Request ', HttpStatus.BAD_REQUEST);
         });
 
-        return
-    
+      return;
+    } else {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
-
-  
   }
 
-  
-  async update(
-    id: string,
-    body: UpdateResumeDto ,
-  ) {
+  async update(id: string, body: UpdateResumeDto) {
     const findResume = await ResumeEntity.findOne({
       where: { id },
     });
@@ -115,18 +101,16 @@ export class ResumeServise {
       throw new HttpException('Resume Not Found', HttpStatus.NOT_FOUND);
     }
 
-   
-        const updated = await ResumeEntity.update(id, {
-          title :body.title || findResume.title,
-          skills :body.skills || findResume.skills ,
-          experinces : body.experinces  || findResume.experinces ,
-          salery_from: +body.salery_from || findResume.salery_from,
-          currency: body.currency  || findResume.currency,
-          about: body.about || findResume.about ,
-        });
+    const updated = await ResumeEntity.update(id, {
+      title: body.title || findResume.title,
+      skills: body.skills || findResume.skills,
+      experinces: body.experinces || findResume.experinces,
+      salery_from: +body.salery_from || findResume.salery_from,
+      currency: body.currency || findResume.currency,
+      about: body.about || findResume.about,
+    });
 
-        return updated;
-    
+    return updated;
   }
 
   async remove(id: string) {

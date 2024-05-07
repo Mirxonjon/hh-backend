@@ -20,7 +20,7 @@ import {
   ApiHeader,
   ApiNoContentResponse,
   ApiNotFoundResponse,
-  ApiOkResponse, 
+  ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { LikeServise } from './like.service';
@@ -35,32 +35,25 @@ export class LikeController {
   readonly #_service: LikeServise;
   constructor(service: LikeServise) {
     this.#_service = service;
-  
   }
-
-
 
   // @Get('/one/:id')
   // @ApiBadRequestResponse()
   // @ApiNotFoundResponse()
   // @ApiOkResponse()
-  // async findOne(@Param('id') id: string ) {   
+  // async findOne(@Param('id') id: string ) {
   //   return await this.#_service.findOne(id);
   // }
 
-  
-  // @UseGuards(jwtGuard) 
+  // @UseGuards(jwtGuard)
   @Get('/all')
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  async findAll(
-    @Headers() header: CustomHeaders
-  ) {
+  async findAll(@Headers() header: CustomHeaders) {
     return await this.#_service.findAll(header);
   }
 
-  
   // @Get('/sort')
   // @ApiBadRequestResponse()
   // @ApiNotFoundResponse()
@@ -72,18 +65,13 @@ export class LikeController {
   //   return await this.#_service.findsort(type_of_service);
   // }
 
-
-
-  // @UseGuards(jwtGuard) 
+  // @UseGuards(jwtGuard)
   @Post('create')
   @HttpCode(HttpStatus.CREATED)
   @ApiBody({
     schema: {
       type: 'object',
-      required: [
-        'job_id',
-        'like',
-      ],
+      required: ['job_id', 'like'],
       properties: {
         job_id: {
           type: 'string',
@@ -91,7 +79,7 @@ export class LikeController {
         },
         like: {
           type: 'boolean',
-          default: true ,
+          default: true,
         },
       },
     },
@@ -102,12 +90,9 @@ export class LikeController {
   async create(
     // @Request() req :CustomRequest ,
     @Body() createLikeDto: CreateLikeDto,
-    @Headers() header: CustomHeaders
+    @Headers() header: CustomHeaders,
   ) {
-    return await this.#_service.update(
-      header,
-      createLikeDto
-    );
+    return await this.#_service.update(header, createLikeDto);
   }
 
   // @UseGuards(jwtGuard)

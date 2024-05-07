@@ -44,11 +44,9 @@ export class JobController {
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  async findOne(@Param('id') id: string ,        @Headers() header: CustomHeaders, ) {   
-    return await this.#_service.findOne(id , header);
+  async findOne(@Param('id') id: string, @Headers() header: CustomHeaders) {
+    return await this.#_service.findOne(id, header);
   }
-
-  
 
   // @Get('/all')
   // @ApiBadRequestResponse()
@@ -58,7 +56,6 @@ export class JobController {
   //   return await this.#_service.findAll();
   // }
 
-  
   @Get('/all')
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
@@ -73,29 +70,33 @@ export class JobController {
     @Query('pageNumber') pageNumber: number,
     @Query('pageSize') pageSize: number,
   ) {
-    return await this.#_service.findsort(title ,orgname,salary , salary_type , popular ,pageNumber ,pageSize);
+    return await this.#_service.findsort(
+      title,
+      orgname,
+      salary,
+      salary_type,
+      popular,
+      pageNumber,
+      pageSize,
+    );
   }
 
   @Get('/all/myjobs')
   @ApiBadRequestResponse()
-  @UseGuards(jwtGuard) 
+  @UseGuards(jwtGuard)
   @ApiNotFoundResponse()
   @ApiOkResponse()
-
   async findsortmyjobs(
     @Query('pageNumber') pageNumber: number,
     @Query('pageSize') pageSize: number,
-    @Headers() header: CustomHeaders
+    @Headers() header: CustomHeaders,
   ) {
     // console.log('okk ' , req.userId);
-    
-    return await this.#_service.findsortmyjobs(header ,pageNumber ,pageSize);
+
+    return await this.#_service.findsortmyjobs(header, pageNumber, pageSize);
   }
 
-
-
-
-  @UseGuards(jwtGuard) 
+  @UseGuards(jwtGuard)
   @Post('create')
   @HttpCode(HttpStatus.CREATED)
   @ApiBody({
@@ -110,7 +111,7 @@ export class JobController {
         'requrements',
         'salery_from',
         'currency',
-        'about'
+        'about',
       ],
       properties: {
         title: {
@@ -154,8 +155,8 @@ export class JobController {
           default: 'dollar',
         },
         about: {
-          type : 'string',
-          default: 'haqida malumot'
+          type: 'string',
+          default: 'haqida malumot',
         },
       },
     },
@@ -164,16 +165,13 @@ export class JobController {
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   async create(
-    @Request() req :CustomRequest ,
+    @Request() req: CustomRequest,
     @Body() createJobDto: CreateJobDto,
-    @Headers() header: CustomHeaders
+    @Headers() header: CustomHeaders,
   ) {
     console.log(req.userId);
-    
-    return await this.#_service.create(
-      header ,
-      createJobDto
-    );
+
+    return await this.#_service.create(header, createJobDto);
   }
 
   @UseGuards(jwtGuard)
@@ -224,22 +222,16 @@ export class JobController {
           default: 'dollar',
         },
         about: {
-          type : 'string',
-          default: 'haqida malumot'
+          type: 'string',
+          default: 'haqida malumot',
         },
       },
     },
   })
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
-  async update(
-    @Param('id') id: string,
-    @Body() updateJobDto: UpdateJobDto,
-  ) {
-    await this.#_service.update(
-      id,
-      updateJobDto,
-    );
+  async update(@Param('id') id: string, @Body() updateJobDto: UpdateJobDto) {
+    await this.#_service.update(id, updateJobDto);
   }
 
   @UseGuards(jwtGuard)

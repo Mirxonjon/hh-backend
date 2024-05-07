@@ -7,7 +7,6 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   }
 
   validate(req: Request): string {
-
     // const user = d.find(e => e.username == username && e.password == password)
 
     // if(user) {

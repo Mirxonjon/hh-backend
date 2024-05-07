@@ -20,13 +20,13 @@ import {
   ApiCreatedResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
-  ApiOkResponse, 
-  ApiOperation, 
+  ApiOkResponse,
+  ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
 import { ResponseServise } from './response.service';
 import { CreateResponseDto } from './dto/create_response.dto';
-import {  UpdateResponseDto } from './dto/update_response.dto';
+import { UpdateResponseDto } from './dto/update_response.dto';
 import { jwtGuard } from '../auth/guards/jwt.guard';
 import { CustomHeaders, CustomRequest } from 'src/types';
 @Controller('Response')
@@ -42,12 +42,11 @@ export class ResponseController {
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  async findOne(@Param('id') id: string ) {   
+  async findOne(@Param('id') id: string) {
     return await this.#_service.findOne(id);
   }
 
-  
-  // @UseGuards(jwtGuard) 
+  // @UseGuards(jwtGuard)
   // @Get('/all')
   // @ApiBadRequestResponse()
   // @ApiNotFoundResponse()
@@ -58,7 +57,7 @@ export class ResponseController {
   //   return await this.#_service.findAll(req.userId);
   // }
 
-  @UseGuards(jwtGuard) 
+  @UseGuards(jwtGuard)
   @Get('/all')
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
@@ -69,21 +68,16 @@ export class ResponseController {
     @Query('pageNumber') pageNumber: number,
     @Query('pageSize') pageSize: number,
   ) {
-    return await this.#_service.findSort(header , type , pageNumber ,pageSize);
+    return await this.#_service.findSort(header, type, pageNumber, pageSize);
   }
 
-
-
-  @UseGuards(jwtGuard) 
+  @UseGuards(jwtGuard)
   @Post('create')
   @HttpCode(HttpStatus.CREATED)
   @ApiBody({
     schema: {
       type: 'object',
-      required: [
-        'job_id',
-        'like',
-      ],
+      required: ['job_id', 'like'],
       properties: {
         job_id: {
           type: 'string',
@@ -99,10 +93,7 @@ export class ResponseController {
     @Headers() header: CustomHeaders,
     @Body() createResponseDto: CreateResponseDto,
   ) {
-    return await this.#_service.create(
-      header,
-      createResponseDto
-    );
+    return await this.#_service.create(header, createResponseDto);
   }
 
   @UseGuards(jwtGuard)
@@ -116,7 +107,6 @@ export class ResponseController {
           type: 'string',
           default: 'asdfasfsfgfgsdfdf57547ff49e',
         },
-
       },
     },
   })
@@ -126,10 +116,7 @@ export class ResponseController {
     @Param('id') id: string,
     @Body() updateResponseDto: UpdateResponseDto,
   ) {
-    await this.#_service.update(
-      id,
-      updateResponseDto,
-    );
+    await this.#_service.update(id, updateResponseDto);
   }
 
   @UseGuards(jwtGuard)

@@ -5,6 +5,6 @@ import { AuthServise } from '../auth/auth.service';
 
 @Module({
   controllers: [LikeController],
-  providers: [LikeServise, AuthServise ],
+  providers: [LikeServise, AuthServise],
 })
 export class LikeModule {}

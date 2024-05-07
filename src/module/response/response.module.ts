@@ -5,6 +5,6 @@ import { AuthServise } from '../auth/auth.service';
 
 @Module({
   controllers: [ResponseController],
-  providers: [ResponseServise , AuthServise],
+  providers: [ResponseServise, AuthServise],
 })
 export class ResponseModule {}

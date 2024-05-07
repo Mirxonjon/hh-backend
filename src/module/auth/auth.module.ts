@@ -15,7 +15,7 @@ import { AuthServise } from './auth.service';
       global: true,
       signOptions: { expiresIn: '3600s' },
     }),
-    CacheModule.register()
+    CacheModule.register(),
   ],
   controllers: [AuthController],
   providers: [LocalStrategy, jwtStrategy, AuthServise],

@@ -4,6 +4,4 @@ export class CreateResponseDto {
   @IsString()
   @IsNotEmpty()
   job_id: string;
-
-  
 }

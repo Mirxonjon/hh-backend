@@ -23,10 +23,10 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api', app, document);
-  
+
   const host = config.getOrThrow<string>('app.host');
   const port = config.getOrThrow<number>('app.port');
-  
+
   await app.listen(port, host);
 }
 bootstrap();

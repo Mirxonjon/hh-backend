@@ -5,5 +5,5 @@ export class UpdateResponseDto {
   job_id: string;
 
   @IsString()
-  response: string
+  response: string;
 }

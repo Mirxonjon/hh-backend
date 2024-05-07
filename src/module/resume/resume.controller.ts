@@ -25,7 +25,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { ResumeServise } from './resume.service';
-import {  CreateResumeDto } from './dto/create_resume.dto';
+import { CreateResumeDto } from './dto/create_resume.dto';
 import { UpdateResumeDto } from './dto/update_resume.dto';
 import { jwtGuard } from '../auth/guards/jwt.guard';
 import { CustomHeaders, CustomRequest } from 'src/types';
@@ -42,11 +42,9 @@ export class ResumeController {
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  async findOne(@Param('id') id: string ) {   
+  async findOne(@Param('id') id: string) {
     return await this.#_service.findOne(id);
   }
-
-  
 
   @Get('/all')
   @ApiBadRequestResponse()
@@ -56,7 +54,6 @@ export class ResumeController {
     return await this.#_service.findAll();
   }
 
-  
   // @Get('/sort')
   // @ApiBadRequestResponse()
   // @ApiNotFoundResponse()
@@ -68,9 +65,7 @@ export class ResumeController {
   //   return await this.#_service.findsort(type_of_service);
   // }
 
-
-
-  @UseGuards(jwtGuard) 
+  @UseGuards(jwtGuard)
   @Post('create')
   @HttpCode(HttpStatus.CREATED)
   @ApiBody({
@@ -82,7 +77,7 @@ export class ResumeController {
         'experinces',
         'salery_from',
         'currency',
-        'About'
+        'About',
       ],
       properties: {
         title: {
@@ -106,8 +101,8 @@ export class ResumeController {
           default: 'dollar',
         },
         About: {
-          type : 'string',
-          default: 'haqida malumot'
+          type: 'string',
+          default: 'haqida malumot',
         },
       },
     },
@@ -116,13 +111,10 @@ export class ResumeController {
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   async create(
-    @Headers() header: CustomHeaders ,
+    @Headers() header: CustomHeaders,
     @Body() createResumeDto: CreateResumeDto,
   ) {
-    return await this.#_service.create(
-      header,
-      createResumeDto
-    );
+    return await this.#_service.create(header, createResumeDto);
   }
 
   @UseGuards(jwtGuard)
@@ -153,8 +145,8 @@ export class ResumeController {
           default: 'dollar',
         },
         About: {
-          type : 'string',
-          default: 'haqida malumot'
+          type: 'string',
+          default: 'haqida malumot',
         },
       },
     },
@@ -165,10 +157,7 @@ export class ResumeController {
     @Param('id') id: string,
     @Body() updateResumeDto: UpdateResumeDto,
   ) {
-    await this.#_service.update(
-      id,
-      updateResumeDto,
-    );
+    await this.#_service.update(id, updateResumeDto);
   }
 
   @UseGuards(jwtGuard)

@@ -4,13 +4,12 @@ export class UpdateJobDto {
   @IsString()
   title: string;
 
-
   @IsString()
   org_name: string;
 
   @IsString()
   expriece: string;
-  
+
   @IsString()
   address: string;
 
@@ -20,7 +19,6 @@ export class UpdateJobDto {
   @IsString()
   email: string;
 
-  
   @IsString()
   telegram: string;
 
@@ -32,8 +30,7 @@ export class UpdateJobDto {
 
   @IsString()
   currency: string;
-  
+
   @IsString()
   about: string;
-
 }

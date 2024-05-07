@@ -15,9 +15,7 @@ export class UpdateResumeDto {
 
   @IsString()
   currency: string;
-  
+
   @IsString()
   about: string;
-
-
 }

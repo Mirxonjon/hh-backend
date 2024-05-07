@@ -15,7 +15,7 @@ export class AuthController {
   @ApiBody({
     schema: {
       type: 'object',
-      required: ['name',  'password'],
+      required: ['name', 'password'],
       properties: {
         name: {
           type: 'string',

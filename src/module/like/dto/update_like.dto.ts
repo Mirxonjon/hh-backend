@@ -5,5 +5,5 @@ export class UpdateLikeDto {
   job_id: string;
 
   @IsBoolean()
-  like: boolean
+  like: boolean;
 }

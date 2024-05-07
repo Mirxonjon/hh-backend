@@ -6,11 +6,7 @@ import {
   Headers,
   HttpCode,
   HttpStatus,
-  Param,
   Patch,
-  Post,
-  Request,
-  UploadedFiles,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -19,7 +15,6 @@ import {
   ApiBearerAuth,
   ApiBody,
   ApiConsumes,
-  ApiCreatedResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -30,7 +25,7 @@ import { userServise } from './user.service';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { UpdateUserDto } from './dto/update_user.dto';
 import { jwtGuard } from '../auth/guards/jwt.guard';
-import { CustomHeaders, CustomRequest } from 'src/types';
+import { CustomHeaders } from 'src/types';
 @Controller('user')
 @ApiTags('user')
 @ApiBearerAuth('JWT-auth')
@@ -67,13 +62,17 @@ export class userController {
           type: 'string',
           default: '123',
         },
+        phone: {
+          type: 'string',
+          default: '123',
+        },
         occupation: {
           type: 'string',
           default: '123',
         },
         image_link: {
           type: 'string',
-           format: 'binary',
+          format: 'binary',
         },
       },
     },
@@ -82,16 +81,14 @@ export class userController {
   @ApiOperation({ summary: 'Attendance Punch In' })
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
-  @UseInterceptors(
-    FileFieldsInterceptor([{ name: 'image' }]),
-  )
+  @UseInterceptors(FileFieldsInterceptor([{ name: 'image' }]))
   async update(
     @Headers() header: CustomHeaders,
     @Body() updatePartnerDto: UpdateUserDto,
-    files: { image?: Express.Multer.File; },
+    files: { image?: Express.Multer.File },
   ) {
     await this.#_service.update(
-      header ,
+      header,
       updatePartnerDto,
       files?.image ? files?.image[0] : null,
     );
@@ -103,9 +100,7 @@ export class userController {
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiNoContentResponse()
-  async remove(
-    @Headers() header: CustomHeaders,
-  ): Promise<void> {
+  async remove(@Headers() header: CustomHeaders): Promise<void> {
     await this.#_service.remove(header);
   }
 }
