@@ -19,6 +19,8 @@ export class JobServise {
   }
 
   async findOne(id: string, header: CustomHeaders) {
+    console.log(header, 'headerdan ;;;;;');
+    
     if (header.authorization) {
       const data = await this.#_auth.verify(header.authorization.split(' ')[1]);
       const userId = data.id ;
