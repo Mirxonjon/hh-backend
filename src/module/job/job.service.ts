@@ -21,7 +21,7 @@ export class JobServise {
   async findOne(id: string, header: CustomHeaders) {
     if (header.authorization) {
       const data = await this.#_auth.verify(header.authorization.split(' ')[1]);
-      const userId = data.id;
+      const userId = data.id ;
 
       const findJob = await JobsEntity.findOne({
         where: [
@@ -76,7 +76,23 @@ export class JobServise {
         responses,
       };
     } else {
-      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      const findJob = await JobsEntity.findOne({
+        where: [
+          {
+            id,
+          },
+        ],
+        relations: {
+
+        },
+      }).catch((e) => {
+        throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
+      });
+      if (!findJob) {
+        throw new HttpException('Job not found', HttpStatus.NOT_FOUND);
+      }
+
+      return findJob
     }
   }
 
