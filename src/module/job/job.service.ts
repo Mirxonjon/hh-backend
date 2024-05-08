@@ -259,11 +259,11 @@ export class JobServise {
         .insert()
         .into(JobsEntity)
         .values({
-          title: body.title,
-          org_name: body.org_name,
-          address: body.address,
-          phone: body.phone,
-          expriece: body.expriece,
+          title: body.title.toLowerCase(),
+          org_name: body.org_name.toLowerCase() ,
+          address: body.address ,
+          phone: body.phone ,
+          expriece: body.expriece ,
           email: body.email,
           telegram: body.telegram,
           seen: generateRandomNumbers(1, 50),
@@ -295,8 +295,8 @@ export class JobServise {
     }
 
     const updated = await JobsEntity.update(id, {
-      title: body.title || findJob.title,
-      org_name: body.org_name || findJob.org_name,
+      title: body.title.toLowerCase() || findJob.title,
+      org_name: body.org_name.toLowerCase() || findJob.org_name,
       address: body.address || findJob.address,
       phone: body.phone || findJob.phone,
       expriece: body.expriece || findJob.expriece,
