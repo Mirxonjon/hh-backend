@@ -80,7 +80,7 @@ export class userServise {
         const updated = await UserEntity.update(findUser.id, {
           phone: body.phone || findUser.phone,
           occupation: body.occupation || findUser.occupation,
-          email: body.occupation || findUser.occupation,
+          email: body.occupation || findUser.email,
           name: body.name || findUser.name,
           password: body.password || findUser.password,
           image_link: linkImage,
