@@ -46,6 +46,7 @@ export class JobServise {
 
       const likes = await LikesEntity.findOne({
         where: {
+            like: true,
           JobsLiked: {
             id: findJob.id,
           },
@@ -84,9 +85,6 @@ export class JobServise {
             id,
           },
         ],
-        relations: {
-
-        },
       }).catch((e) => {
         throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
       });
@@ -159,8 +157,8 @@ export class JobServise {
 
       const [results, total] = await JobsEntity.findAndCount({
         where: {
-          title: title != 'null' ? Like(`%${title}%`) : null,
-          org_name: org_name != 'null' ? Like(`%${org_name}%`) : null,
+          title: title != 'null' ? Like(`%${title.toLowerCase()}%`) : null,
+          org_name: org_name != 'null' ? Like(`%${org_name.toLowerCase()}%`) : null,
           salery_from: salary != 'null' ? MoreThanOrEqual(+salary) : null,
           currency: salary_type != 'null' ? salary_type : null,
         },
@@ -194,8 +192,8 @@ export class JobServise {
 
       const [results, total] = await JobsEntity.findAndCount({
         where: {
-          title: title != 'null' ? Like(`%${title}%`) : null,
-          org_name: org_name != 'null' ? Like(`%${org_name}%`) : null,
+          title: title != 'null' ? Like(`%${title.toLowerCase()}%`) : null,
+          org_name: org_name != 'null' ? Like(`%${org_name.toLowerCase()}%`) : null,
           salery_from: salary != 'null' ? MoreThanOrEqual(+salary) : null,
           currency: salary_type != 'null' ? salary_type : null,
         },

@@ -10,7 +10,6 @@ import {
   Patch,
   Post,
   Query,
-  Request,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -21,14 +20,13 @@ import {
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
-  ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
 import { ResponseServise } from './response.service';
 import { CreateResponseDto } from './dto/create_response.dto';
 import { UpdateResponseDto } from './dto/update_response.dto';
 import { jwtGuard } from '../auth/guards/jwt.guard';
-import { CustomHeaders, CustomRequest } from 'src/types';
+import { CustomHeaders } from 'src/types';
 @Controller('Response')
 @ApiTags('Response')
 @ApiBearerAuth('JWT-auth')

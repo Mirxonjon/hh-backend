@@ -102,7 +102,7 @@ export class LikeServise {
         throw new HttpException('User not found', HttpStatus.NOT_FOUND);
       }
 
-      const findJob = await LikesEntity.findOne({
+      const findJob = await JobsEntity.findOne({
         where: {
           id: body.job_id,
         },
@@ -133,7 +133,7 @@ export class LikeServise {
           JobsLiked: findJob,
         });
 
-        return updated;
+        return 
       }
     } else {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
