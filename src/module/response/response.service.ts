@@ -58,7 +58,7 @@ export class ResponseServise {
       const data = await this.#_auth.verify(header.authorization.split(' ')[1]);
       const userId = data.id;
 
-      if ((type = 'all')) {
+      if (type == 'all') {
         const offset = (pageNumber - 1) * pageSize;
 
         const [results, total]: any = await ResponseEntity.findAndCount({

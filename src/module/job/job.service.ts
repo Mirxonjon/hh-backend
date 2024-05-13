@@ -19,11 +19,9 @@ export class JobServise {
   }
 
   async findOne(id: string, header: CustomHeaders) {
-    console.log(header, 'headerdan ;;;;;');
-    
     if (header.authorization) {
       const data = await this.#_auth.verify(header.authorization.split(' ')[1]);
-      const userId = data.id ;
+      const userId = data.id;
 
       const findJob = await JobsEntity.findOne({
         where: [
@@ -36,8 +34,6 @@ export class JobServise {
           // likes: true
         },
       }).catch((e) => {
-        console.log('okk', e);
-
         throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
       });
       if (!findJob) {
@@ -46,7 +42,7 @@ export class JobServise {
 
       const likes = await LikesEntity.findOne({
         where: {
-            like: true,
+          like: true,
           JobsLiked: {
             id: findJob.id,
           },
@@ -68,8 +64,6 @@ export class JobServise {
           },
         },
       }).catch((e) => {
-        console.log('okk', e);
-
         throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
       });
 
@@ -92,13 +86,11 @@ export class JobServise {
         throw new HttpException('Job not found', HttpStatus.NOT_FOUND);
       }
 
-      return findJob
+      return findJob;
     }
   }
 
   async findsortmyjobs(header: CustomHeaders, pageNumber = 1, pageSize = 10) {
-    console.log(header, 'userid');
-
     if (header.authorization) {
       const data = await this.#_auth.verify(header.authorization.split(' ')[1]);
       const userId = data.id;
@@ -121,7 +113,6 @@ export class JobServise {
         skip: offset,
         take: pageSize,
       });
-      // console.log(results);
 
       if (!results) {
         throw new HttpException('job not found', HttpStatus.NOT_FOUND);
@@ -158,7 +149,8 @@ export class JobServise {
       const [results, total] = await JobsEntity.findAndCount({
         where: {
           title: title != 'null' ? Like(`%${title.toLowerCase()}%`) : null,
-          org_name: org_name != 'null' ? Like(`%${org_name.toLowerCase()}%`) : null,
+          org_name:
+            org_name != 'null' ? Like(`%${org_name.toLowerCase()}%`) : null,
           salery_from: salary != 'null' ? MoreThanOrEqual(+salary) : null,
           currency: salary_type != 'null' ? salary_type : null,
         },
@@ -193,7 +185,8 @@ export class JobServise {
       const [results, total] = await JobsEntity.findAndCount({
         where: {
           title: title != 'null' ? Like(`%${title.toLowerCase()}%`) : null,
-          org_name: org_name != 'null' ? Like(`%${org_name.toLowerCase()}%`) : null,
+          org_name:
+            org_name != 'null' ? Like(`%${org_name.toLowerCase()}%`) : null,
           salery_from: salary != 'null' ? MoreThanOrEqual(+salary) : null,
           currency: salary_type != 'null' ? salary_type : null,
         },
@@ -245,9 +238,9 @@ export class JobServise {
         where: {
           id: userId,
         },
-      }).catch((e) => console.log(e));
-
-      console.log(findUser);
+      }).catch(() => {
+        throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
+      });
 
       if (!findUser) {
         throw new HttpException('User not found', HttpStatus.NOT_FOUND);
@@ -258,10 +251,10 @@ export class JobServise {
         .into(JobsEntity)
         .values({
           title: body.title.toLowerCase(),
-          org_name: body.org_name.toLowerCase() ,
-          address: body.address ,
-          phone: body.phone ,
-          expriece: body.expriece ,
+          org_name: body.org_name.toLowerCase(),
+          address: body.address,
+          phone: body.phone,
+          expriece: body.expriece,
           email: body.email,
           telegram: body.telegram,
           seen: generateRandomNumbers(1, 50),

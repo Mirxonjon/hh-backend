@@ -9,6 +9,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Request,
   UseGuards,
 } from '@nestjs/common';
@@ -50,8 +51,12 @@ export class LikeController {
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  async findAll(@Headers() header: CustomHeaders) {
-    return await this.#_service.findAll(header);
+  async findAll(
+    @Headers() header: CustomHeaders,
+    @Query('pageNumber') pageNumber: number,
+    @Query('pageSize') pageSize: number,
+  ) {
+    return await this.#_service.findAll(header, pageNumber, pageSize);
   }
 
   // @Get('/sort')

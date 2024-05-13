@@ -26,11 +26,12 @@ export class LikeServise {
     return findLike;
   }
 
-  async findAll(header: CustomHeaders) {
+  async findAll(header: CustomHeaders, pageNumber = 1, pageSize = 10) {
     if (header.authorization) {
+      const offset = (pageNumber - 1) * pageSize;
       const data = await this.#_auth.verify(header.authorization.split(' ')[1]);
       const userId = data.id;
-      const findLikes = await LikesEntity.find({
+      const [results, total] = await LikesEntity.findAndCount({
         where: {
           like: true,
           userLiked: {
@@ -42,14 +43,26 @@ export class LikeServise {
         },
         relations: {
           userLiked: true,
+          JobsLiked: true,
         },
+        skip: offset,
+        take: pageSize,
       });
 
-      if (!findLikes) {
+      if (!results) {
         throw new HttpException('likes not found', HttpStatus.NOT_FOUND);
       }
+      const totalPages = Math.ceil(total / pageSize);
 
-      return findLikes;
+      return {
+        results,
+        pagination: {
+          currentPage: pageNumber,
+          totalPages,
+          pageSize,
+          totalItems: total,
+        },
+      };
     } else {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
@@ -76,7 +89,6 @@ export class LikeServise {
     if (header.authorization) {
       const data = await this.#_auth.verify(header.authorization.split(' ')[1]);
       const userId = data.id;
-      console.log(data, 'ssssss');
       const findlikes = await LikesEntity.findOne({
         where: {
           JobsLiked: {
@@ -96,7 +108,6 @@ export class LikeServise {
           id: userId,
         },
       });
-      console.log(findUser);
 
       if (!findUser) {
         throw new HttpException('User not found', HttpStatus.NOT_FOUND);
@@ -133,7 +144,7 @@ export class LikeServise {
           JobsLiked: findJob,
         });
 
-        return 
+        return;
       }
     } else {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);

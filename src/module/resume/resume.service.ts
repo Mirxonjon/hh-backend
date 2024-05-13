@@ -23,18 +23,31 @@ export class ResumeServise {
     return findResume;
   }
 
-  async findAll() {
-    const findResumes = await ResumeEntity.find({
+  async findAll(pageNumber = 1, pageSize = 10) {
+    const offset = (pageNumber - 1) * pageSize;
+    const [results, total] = await ResumeEntity.findAndCount({
       order: {
         create_data: 'desc',
       },
+      skip: offset,
+      take: pageSize,
     });
 
-    if (!findResumes) {
+    if (!results) {
       throw new HttpException('Resumes not found', HttpStatus.NOT_FOUND);
     }
 
-    return findResumes;
+    const totalPages = Math.ceil(total / pageSize);
+
+    return {
+      results,
+      pagination: {
+        currentPage: pageNumber,
+        totalPages,
+        pageSize,
+        totalItems: total,
+      },
+    };
   }
 
   // async findsort(type: string) {

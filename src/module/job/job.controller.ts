@@ -91,8 +91,6 @@ export class JobController {
     @Query('pageSize') pageSize: number,
     @Headers() header: CustomHeaders,
   ) {
-    // console.log('okk ' , req.userId);
-
     return await this.#_service.findsortmyjobs(header, pageNumber, pageSize);
   }
 
@@ -169,8 +167,6 @@ export class JobController {
     @Body() createJobDto: CreateJobDto,
     @Headers() header: CustomHeaders,
   ) {
-    console.log(req.userId);
-
     return await this.#_service.create(header, createJobDto);
   }
 

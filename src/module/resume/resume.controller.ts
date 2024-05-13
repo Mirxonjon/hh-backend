@@ -50,8 +50,11 @@ export class ResumeController {
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  async findAll() {
-    return await this.#_service.findAll();
+  async findAll(
+    @Query('pageNumber') pageNumber: number,
+    @Query('pageSize') pageSize: number,
+  ) {
+    return await this.#_service.findAll(pageNumber, pageSize);
   }
 
   // @Get('/sort')
