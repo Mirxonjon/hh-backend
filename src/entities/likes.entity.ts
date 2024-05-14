@@ -23,7 +23,7 @@ export class LikesEntity extends BaseEntity {
   @ManyToOne(() => UserEntity, (user) => user.mylikes)
   userLiked: UserEntity;
 
-  @ManyToOne(() => JobsEntity, (user) => user.likes)
+  @ManyToOne(() => JobsEntity, (user) => user.likes , { onDelete: 'CASCADE'})
   JobsLiked: JobsEntity;
 
   @CreateDateColumn({ name: 'created_at' })

@@ -20,10 +20,10 @@ export class ResponseEntity extends BaseEntity {
   })
   answer: string;
 
-  @ManyToOne(() => UserEntity, (user) => user.responses)
+  @ManyToOne(() => UserEntity, (user) => user.responses,)
   responsed_user: UserEntity;
 
-  @ManyToOne(() => JobsEntity, (job) => job.responses)
+  @ManyToOne(() => JobsEntity, (job) => job.responses ,  { onDelete: 'CASCADE'})
   responsed_job: JobsEntity;
 
   @CreateDateColumn({ name: 'created_at' })

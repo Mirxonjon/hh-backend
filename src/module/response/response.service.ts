@@ -95,7 +95,7 @@ export class ResponseServise {
         );
 
         return {
-          data,
+          results:data,
           pagination: {
             currentPage: pageNumber,
             totalPages,

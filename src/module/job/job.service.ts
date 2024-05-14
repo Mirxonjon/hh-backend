@@ -307,12 +307,15 @@ export class JobServise {
   async remove(id: string) {
     const findJob = await JobsEntity.findOne({
       where: { id },
+
     });
 
     if (!findJob) {
       throw new HttpException('Job Not Found', HttpStatus.NOT_FOUND);
     }
 
-    await JobsEntity.delete({ id });
+    await JobsEntity.delete({ id }).catch(e=>{ console.log(e)
+    throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);}
+    );
   }
 }

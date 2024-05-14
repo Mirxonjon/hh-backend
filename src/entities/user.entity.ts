@@ -53,7 +53,7 @@ export class UserEntity extends BaseEntity {
   @OneToMany(() => ResumeEntity, (resume) => resume.user)
   resumes: ResumeEntity[];
 
-  @OneToMany(() => JobsEntity, (jobs) => jobs.userInfo)
+  @OneToMany(() => JobsEntity, (jobs) => jobs.userInfo ,)
   my_jobs: JobsEntity[];
 
   @OneToMany(() => LikesEntity, (likes) => likes.userLiked)

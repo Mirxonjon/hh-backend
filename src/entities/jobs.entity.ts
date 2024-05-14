@@ -83,13 +83,19 @@ export class JobsEntity extends BaseEntity {
   })
   rejects: number;
 
-  @ManyToOne(() => UserEntity, (user) => user.my_jobs)
+  // @Column({
+  //   type: 'bigint',
+  //   // nullable
+  // })
+  // rejects1: number;
+
+  @ManyToOne(() => UserEntity, (user) => user.my_jobs,)
   userInfo: UserEntity;
 
-  @OneToMany(() => LikesEntity, (likes) => likes.JobsLiked)
-  likes: JobsEntity[];
+  @OneToMany(() => LikesEntity, (likes) => likes.JobsLiked, { onDelete: 'CASCADE'} )
+  likes: LikesEntity[];
 
-  @OneToMany(() => ResponseEntity, (responses) => responses.responsed_job)
+  @OneToMany(() => ResponseEntity, (responses) => responses.responsed_job , { onDelete: 'CASCADE'} )
   responses: JobsEntity[];
 
   @CreateDateColumn({ name: 'created_at' })
