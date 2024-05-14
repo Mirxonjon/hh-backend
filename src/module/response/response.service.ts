@@ -130,8 +130,18 @@ export class ResponseServise {
 
         const totalPages = Math.ceil(total / pageSize);
 
+        let data = [];
+
+        results.map((e) =>
+          data.push({
+            id: e.id,
+            answer: e.answer,
+            ...e.responsed_job,
+            ...e.responsed_user,
+          }),
+        );
         return {
-          results,
+          results :data,
           pagination: {
             currentPage: pageNumber,
             totalPages,
